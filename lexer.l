@@ -1,213 +1,229 @@
 %{
-#include "stdio.h"
-#include "stdlib.h"
+    #include "parser.tab.h"
+    #include <string.h>
 
-typedef struct {
-    char data[100];
-} YYSTYPE;
-
-YYSTYPE yylval;
+    extern FILE* tokensFile;
+    extern FILE* errors;
 %}
 
 %%
+
+^#include.*$            {} // ignore
+^#define.*$             {} // ignore
+^using.*$               {} // ignore
+
 "void"                  {
-                            printf("%s\n", "void"); 
-                            //return TYPE;
+                            yylval.dataType = VOID;
+                            fprintf(tokensFile, "TYPE: %s\n", "void"); 
+                            return TYPE;
                         }
 "int"                   {
-                            printf("%s\n", "INT"); 
-                            //return TYPE;
+                            yylval.dataType = NUMERICAL;
+                            fprintf(tokensFile, "TYPE: %s\n", "INT"); 
+                            return TYPE;
                         }
 "float"                 {
-                            printf("%s\n", "float"); 
-                            //return TYPE;
+                            yylval.dataType = FNUMERICAL;
+                            fprintf(tokensFile, "%s\n", "float"); 
+                            return TYPE;
                         }
 "double"                {
-                            printf("%s\n", "double"); 
-                            //return TYPE;
+                            yylval.dataType = FNUMERICAL;
+                            fprintf(tokensFile, "%s\n", "double"); 
+                            return TYPE;
                         }
 "bool"                  {   
-                            printf("%s\n", "bool"); 
-                            //return TYPE;
+                            yylval.dataType = BOOLEAN;
+                            fprintf(tokensFile, "%s\n", "bool"); 
+                            return TYPE;
                         }
 "char"                  {
-                            printf("%s\n", "char"); 
-                            //return TYPE;
+                            yylval.dataType = STRING;
+                            fprintf(tokensFile, "%s\n", "char"); 
+                            return TYPE;
                         }
 
 "if"                    {
-                            printf("%s\n", "if");
-                            //return IF;
+                            fprintf(tokensFile, "%s\n", "if");
+                            return IF;
                         }
 "else"                  {
-                            printf("%s\n", "else");
-                            //return ELSE;
+                            fprintf(tokensFile, "%s\n", "else");
+                            return ELSE;
                         }
 "for"                   {
-                            printf("%s\n", "for");
-                            //return FOR;
+                            fprintf(tokensFile, "%s\n", "for");
+                            return FOR;
                         }
 "while"                 {
-                            printf("%s\n", "while");
-                            //return WHILE;
+                            fprintf(tokensFile, "%s\n", "while");
+                            return WHILE;
                         }
 "do"                    {
-                            printf("%s\n", "do");
-                            //return DO;
+                            fprintf(tokensFile, "%s\n", "do");
+                            return DO;
                         }
 "return"                {
-                            printf("%s\n", "return");
-                            //return RETURN;
+                            fprintf(tokensFile, "RETURN\n");
+                            return RETURN;
                         }
 
 [a-zA-Z_][a-zA-Z0-9]*   {
-                            strcpy(yylval.data, yytext);
-                            printf("%s\n", yytext);
-                            //return IDENTIFIER;
+                            strcpy(yylval.strval, yytext);
+                            fprintf(tokensFile, "IDENTIFIER: %s\n", yytext);
+                            return IDENTIFIER;
                         }
 
 [0-9]*                  {
-                            strcpy(yylval.data, yytext); 
-                            printf("%s\n", yytext); 
-                            //return NUM;
+                            yylval.number = atoi(yytext);
+                            fprintf(tokensFile, "NUMBER: %s\n", yytext);
+                            return NUMBER;
                         }
 
+[0-9]*\.[0-9]*          {
+                            yylval.fnumber = atof(yytext);
+                            fprintf(tokensFile, "%s\n", yytext);
+                            return FNUMBER;
+                        }
+
+"cin"                   {
+                            fprintf(tokensFile, "CIN");
+                            return CIN;
+                        }
+"cout"                  {
+                            fprintf(tokensFile, "COUT");
+                            return COUT;
+                        }
+"<<"                    {
+                            fprintf(tokensFile, "CIN_INPUT");
+                            return CIN_INPUT;
+                        }
+">>"                    {
+                            fprintf(tokensFile, "COUT_INPUT");
+                            return COUT_INPUT;
+                        }
+
+
 "++"                    {
-                            printf("%s\n", "increment");
-                            //return INCREMENT;
+                            fprintf(tokensFile, "%s\n", "INCREMENT");
+                            return INCREMENT;
                         }
 "--"                    {
-                            printf("%s\n", "decrement");
-                            //return DECREMENT;
+                            fprintf(tokensFile, "%s\n", "DECREMENT");
+                            return DECREMENT;
                         }
 "+"                     {
-                            printf("%s\n", "sign: +");
-                            //return SIGN;
+                            fprintf(tokensFile, "%s\n", "sign: +");
+                            return SIGN_PLUS;
                         }
 "-"                     {
-                            printf("%s\n", "sign: -");
-                            //return SIGN;
+                            fprintf(tokensFile, "%s\n", "sign: -");
+                            return SIGN_MINUS;
                         }
 "*"                     {
-                            printf("%s\n", "sign: *");
-                            //return SIGN;
+                            fprintf(tokensFile, "%s\n", "sign: *");
+                            return SIGN_MULTIPLY;
                         }
 "%" {
-                            printf("%s\n", "sign: \%");
-                            //return SIGN;
+                            fprintf(tokensFile, "%s\n", "sign: \%");
+                            return SIGN_DIV_REMAINDER;
                         }
 "/"                     {
-                            printf("%s\n", "sign: /");
-                            //return SIGN;
+                            fprintf(tokensFile, "%s\n", "sign: /");
+                            return SIGN_DIV;
                         }
 ">"                     {
-                            printf("%s\n", "sign: >");
-                            //return SIGN_MORE;
+                            fprintf(tokensFile, "%s\n", "sign: >");
+                            return SIGN_MORE;
                         }
 "<"                     {
-                            printf("%s\n", "sign: <");
-                            //return SIGN_LESS;
+                            fprintf(tokensFile, "%s\n", "sign: <");
+                            return SIGN_LESS;
                         }
 "="                     {
-                            printf("%s\n", "sign: =");
-                            //return SIGN_EQUAL;
+                            fprintf(tokensFile, "%s\n", "sign: =");
+                            return SIGN_ASSIGNMENT;
                         }
 "<="                    {
-                            printf("%s\n", "sign: <=");
-                            //return SIGN_LESS_EQUAL;
+                            fprintf(tokensFile, "%s\n", "sign: <=");
+                            return SIGN_LESS_EQUAL;
                         }
 ">="                    {
-                            printf("%s\n", "sign: >=");
-                            //return SIGN_MORE_EQUAL;
+                            fprintf(tokensFile, "%s\n", "sign: >=");
+                            return SIGN_MORE_EQUAL;
                         }
 "+="                    {
-                            printf("%s\n", "sign: +=");
-                            //return sign_assignment_plus;
+                            fprintf(tokensFile, "%s\n", "sign: +=");
+                            return SIGN_PLUS_ASSIGNMENT;
                         }
 "=="                    {
-                            printf("%s\n", "sign: ==");
-                            //return sign_assignment_plus;
+                            fprintf(tokensFile, "%s\n", "sign: ==");
+                            return SIGN_EQUAL;
                         }
 "!="                    {
-                            printf("%s\n", "sign: !=");
-                            //return SIGN_NOT_EQUAL;
+                            fprintf(tokensFile, "%s\n", "sign: !=");
+                            return SIGN_NOT_EQUAL;
                         }
 "-="                    {
-                            printf("%s\n", "sign: -=");
-                            //return sign_assignment_minus;
+                            fprintf(tokensFile, "%s\n", "sign: -=");
+                            return SIGN_MINUS_ASSIGNMENT;
                         }
 "*="                    {
-                            printf("%s\n", "sign: *=");
-                            //return sign_assignment_minus;
+                            fprintf(tokensFile, "%s\n", "sign: *=");
+                            return SIGN_MULTIPLY_ASSIGNMENT;
                         }
 "/="                    {
-                            printf("%s\n", "sign: /=");
-                            //return sign_assignment_minus;
+                            fprintf(tokensFile, "%s\n", "sign: /=");
+                            return SIGN_DIV_ASSIGNMENT;
                         }
 "%="                    {
-                            printf("%s\n", "sign: \%=");
-                            //return sign_assignment_minus;
+                            fprintf(tokensFile, "%s\n", "sign: \%=");
+                            return SIGN_DIV_REMAINDER_ASSIGNMENT;
                         }
 "{"                     {
-                            printf("%s\n", "sign: {");
-                            //return LSCBRACES;
+                            fprintf(tokensFile, "LCBRACE\n");
+                            return LCBRACE;
                         }
 "}"                     {
-                            printf("%s\n", "sign: }");
-                            //return sign_curly_brace_close;
+                            fprintf(tokensFile, "%s\n", "sign: }");
+                            return RCBRACE;
                         }
 "("                     {
-                            printf("%s\n", "sign: (");
-                            // return sign_curly_brace_close;
+                            fprintf(tokensFile, "LPARENTHESIS\n");
+                            return LPARENTHESIS;
                         }
 ")"                     {
-                            printf("%s\n", "sign: )");
-                            // return sign_curly_brace_close;
+                            fprintf(tokensFile, "RPARENTHESIS\n");
+                            return RPARENTHESIS;
                         }
 ":"                     {
-                            printf("%s\n", ":");
-                            // return DOUBLEPOINT;
+                            fprintf(tokensFile, "%s\n", ":");
+                            return DOUBLEPOINT;
                         }
 ";"                     {
-                            printf("%s\n", ";");
-                            // return SEMICOLON; 
+                            fprintf(tokensFile, "SEMICOLON\n");
+                            return SEMICOLON; 
                         }
 ","                     {
-                            printf("%s\n", ",");
-                            //return COMMA;
+                            fprintf(tokensFile, "COMMA\n");
+                            return COMMA;
                         }
 
 [ \n\t\r]               {} // ignore " " "\n" "\t" "\r"
-
 .                       {
-                            printf("unknown character %s\n", yytext);
+                            fprintf(errors, "unknown character \"%s\"\n", yytext);
                             exit(1);
                         }
 %%
 
 
 int yywrap(void){
-return 1;
-}
-
-int main() {
-    FILE* file;
-    char filename[50];
-    printf("path to file: ");
-    scanf("%s", filename);
-    file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Cannot open file(\n");
-        return 0;
-    }
-    yyin = file;
-    yylex();
-    return 0;
+    return 1;
 }
 
 // unused rule
 // [a-zA-Z]                {
 //                             strcpy(yylval.data, yytext);  
-//                             printf("%s\n", yytext); 
+//                             fprintf(tokensFile, "%s\n", yytext); 
 //                             //return LETTER;
 //                         }
