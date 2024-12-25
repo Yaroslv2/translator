@@ -1,8 +1,10 @@
 #include <iostream>
 
+using namespace std;
+
 int id = 1;
 
-int plus(int a, int b) 
+int Plus(int a, int b) 
 {
     return a + b;
 }
@@ -11,7 +13,7 @@ void voidFunc() {
     return;
 }
 
-int minus(int a, int b) {
+int Minus(int a, int b) {
     return a - b;
 }
 
@@ -22,9 +24,13 @@ bool isPositive(int a)
 
 int main()
 {
+    cout << "HELLO!";
+    char* helloMessage = "Hello!1";
+    cout << helloMessage;
     int a = 2;
     int b = 3;
-    int c = plus(a, b);
+    float f = 1.222;
+    int c = Plus(a, b);
 
     if (a > 0) {
         if (a > 1) {
@@ -36,14 +42,15 @@ int main()
     if (isPositive(a))
     {
         for (int i = 0; i < c; i += 1) {
-            a = minus(a, 1);
+            a = Minus(a, 1);
         }
     }
 
     while (b < c + 2)
     {
         b += 1;
-        b = plus(b, 1);
+        b = Plus(b, 1);
+        cout << b;
     }
 
     int d;
@@ -58,6 +65,14 @@ int main()
         d = b;
     }
 
+    if (a == 2 || !(b == 3)) {
+        b = d;
+    }
+
     d = c - 2 * 3 % 2;
+
+    while(true) {
+        cout << "INFINITY LOOP";
+    }
     return 0;
 }

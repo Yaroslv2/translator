@@ -15,7 +15,7 @@
 %debug
 
 %code requires {
-    typedef enum { NUMERICAL, FNUMERICAL, BOOLEAN, VOID, STRING} DataTypeEnum;
+    typedef enum { NUMERICAL, FNUMERICAL, BOOLEAN, VOID, STRINGIFY} DataTypeEnum;
 }
 
 %code {
@@ -33,17 +33,18 @@
 
 %token <dataType> TYPE
 %token IF ELSE FOR WHILE DO RETURN
-%token <strval> IDENTIFIER
+%token <strval> IDENTIFIER STRING
 %token <number> NUMBER
 %token <fnumber> FNUMBER
 %token INCREMENT DECREMENT SIGN_PLUS SIGN_MINUS SIGN_MULTIPLY SIGN_DIV SIGN_DIV_REMAINDER
 %token SIGN_MORE SIGN_LESS SIGN_ASSIGNMENT SIGN_LESS_EQUAL SIGN_MORE_EQUAL SIGN_PLUS_ASSIGNMENT
 %token SIGN_EQUAL SIGN_NOT_EQUAL SIGN_MINUS_ASSIGNMENT SIGN_MULTIPLY_ASSIGNMENT SIGN_DIV_ASSIGNMENT
 %token SIGN_DIV_REMAINDER_ASSIGNMENT LCBRACE RCBRACE LPARENTHESIS RPARENTHESIS DOUBLEPOINT SEMICOLON
-%token CIN COUT CIN_INPUT COUT_INPUT
+%token CIN COUT CIN_BRACES COUT_BRACES ENDL
 %token COMMA
+%token OR AND NOT B_TRUE B_FALSE
 
-%type <strval> expression func_args expression_sign func_call if_statement
+%type <strval> expression func_args expression_sign func_call if_statement cout_statement
 
 %start program
 
@@ -67,10 +68,17 @@ statement:
         { printTabs(); fprintf(yyout, "%s", $1); tabs_count++; }
     | for_statement
     | while_statement
+    | cout_statement
+        { printTabs(); fprintf(yyout, "%s", $1); }
     | expression
         { printTabs(); fprintf(yyout, "%s", $1); }
     | expression SEMICOLON
         { printTabs(); fprintf(yyout, "%s", $1); }
+    ;
+
+cout_statement:
+    COUT COUT_BRACES expression SEMICOLON
+        { sprintf($$, "print(%s)", $3); }
     ;
 
 if_statement:
@@ -156,23 +164,41 @@ expression_sign:
         { sprintf($$, "//"); }
     | SIGN_MINUS_ASSIGNMENT
         { sprintf($$, "-="); }
+    | SIGN_EQUAL
+        { sprintf($$, "=="); }
+    | AND
+        { sprintf($$, "and"); }
+    | OR
+        { sprintf($$, "or"); }
     ;
 
 expression:
     func_call
         { sprintf($$, "%s", $1); }
+    | NOT expression
+        { sprintf($$, "not %s", $2); }
     | expression expression_sign expression
         { sprintf($$, "%s %s %s", $1, $2, $3); printf("%s %s %s\n", $1, $2, $3); }
+    | LPARENTHESIS expression RPARENTHESIS
+        { sprintf($$, "(%s)", $2); }
     | IDENTIFIER
         { sprintf($$, "%s", $1); printf("EXPRESSION IDENTIFIER: %s\n", $1);}
-    | NUMBER 
+    | STRING
+        { sprintf($$, "%s", $1); }
+    | NUMBER
         { sprintf($$, "%d", $1); }
+    | FNUMBER
+        { sprintf($$, "%f", $1); }
     | LCBRACE
         { tabs_count++; printf("LCBRACE %d\n", tabs_count); sprintf($$, ""); }
     | RCBRACE
         { tabs_count--; printf("RCBRACE %d\n", tabs_count); sprintf($$, ""); }
     | TYPE IDENTIFIER
         { sprintf($$, "%s", $2); }
+    | B_TRUE
+        { sprintf($$, "True"); }
+    | B_FALSE
+        { sprintf($$, "False"); }
     ;
 
 func_call:

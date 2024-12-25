@@ -43,6 +43,12 @@
                             return TYPE;
                         }
 
+"char*"                 {
+                            yylval.dataType = STRING;
+                            fprintf(tokensFile, "%s\n", "char*"); 
+                            return TYPE;
+                        }
+
 "if"                    {
                             fprintf(tokensFile, "%s\n", "if");
                             return IF;
@@ -68,6 +74,37 @@
                             return RETURN;
                         }
 
+"cin"                   {
+                            fprintf(tokensFile, "CIN");
+                            return CIN;
+                        }
+"cout"                  {
+                            fprintf(tokensFile, "COUT");
+                            return COUT;
+                        }
+"<<"                    {
+                            fprintf(tokensFile, "COUT_BRACES");
+                            return COUT_BRACES;
+                        }
+">>"                    {
+                            fprintf(tokensFile, "CIN_BRACES");
+                            return CIN_BRACES;
+                        }
+"endl"                  {
+                            fprintf(tokensFile, "ENDL");
+                            return ENDL;
+                        }
+
+"true"                  {
+                            fprintf(tokensFile, "B_TRUE");
+                            return B_TRUE;
+                        }
+
+"false"                 {
+                            fprintf(tokensFile, "B_FALSE");
+                            return B_FALSE;
+                        }
+
 [a-zA-Z_][a-zA-Z0-9]*   {
                             strcpy(yylval.strval, yytext);
                             fprintf(tokensFile, "IDENTIFIER: %s\n", yytext);
@@ -85,24 +122,6 @@
                             fprintf(tokensFile, "%s\n", yytext);
                             return FNUMBER;
                         }
-
-"cin"                   {
-                            fprintf(tokensFile, "CIN");
-                            return CIN;
-                        }
-"cout"                  {
-                            fprintf(tokensFile, "COUT");
-                            return COUT;
-                        }
-"<<"                    {
-                            fprintf(tokensFile, "CIN_INPUT");
-                            return CIN_INPUT;
-                        }
-">>"                    {
-                            fprintf(tokensFile, "COUT_INPUT");
-                            return COUT_INPUT;
-                        }
-
 
 "++"                    {
                             fprintf(tokensFile, "%s\n", "INCREMENT");
@@ -176,6 +195,18 @@
                             fprintf(tokensFile, "%s\n", "sign: /=");
                             return SIGN_DIV_ASSIGNMENT;
                         }
+"||"                    {
+                            fprintf(tokensFile, "%s\n", "OR");
+                            return OR;
+                        }
+"&&"                    {
+                            fprintf(tokensFile, "%s\n", "AND");
+                            return AND;
+                        }
+"!"                     {
+                            fprintf(tokensFile, "%s\n", "NOT");
+                            return NOT;
+                        }
 "%="                    {
                             fprintf(tokensFile, "%s\n", "sign: \%=");
                             return SIGN_DIV_REMAINDER_ASSIGNMENT;
@@ -207,6 +238,17 @@
 ","                     {
                             fprintf(tokensFile, "COMMA\n");
                             return COMMA;
+                        }
+
+\".*\"                  {
+                            fprintf(tokensFile, "STRING"); 
+                            strcpy(yylval.strval, yytext);
+                            return STRING; 
+                        }
+\'.*\'                  {
+                            fprintf(tokensFile, "STRING"); 
+                            strcpy(yylval.strval, yytext); 
+                            return STRING; 
                         }
 
 [ \n\t\r]               {} // ignore " " "\n" "\t" "\r"
