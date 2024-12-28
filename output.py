@@ -12,8 +12,8 @@ def isPositive(a):
     return a > 0
 
 def main():
-    print("HELLO!")
-    helloMessage = "Hello!1"
+    print("HELLO!\n")
+    helloMessage = "Hello!1\n"
     print(helloMessage)
     a = 2
     b = 3
@@ -39,6 +39,7 @@ def main():
         b += 1
         b = Plus(b, 1)
         print(b)
+        print("\n")
     
 
     if a < c:
@@ -54,10 +55,20 @@ def main():
     if a == 2 or not (b == 3):
         b = d
     
+    print(c - 2 * 3 // 2)
+    print("\n")
     d = c - 2 * 3 // 2
-    while True:
+    boolValue = True
+    inc = 0
+    while boolValue:
         
-        print("INFINITY LOOP")
+        print("INFINITY LOOP\n")
+        if inc < 8:
+            inc += 1
+        
+        else:
+            boolValue = False
+        
     
     return 0
 

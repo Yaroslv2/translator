@@ -24,8 +24,8 @@ bool isPositive(int a)
 
 int main()
 {
-    cout << "HELLO!";
-    char* helloMessage = "Hello!1";
+    cout << "HELLO!\n";
+    char* helloMessage = "Hello!1\n";
     cout << helloMessage;
     int a = 2;
     int b = 3;
@@ -51,6 +51,7 @@ int main()
         b += 1;
         b = Plus(b, 1);
         cout << b;
+        cout << "\n";
     }
 
     int d;
@@ -69,10 +70,22 @@ int main()
         b = d;
     }
 
+    cout << c - 2 * 3 % 2;
+    cout << "\n";
     d = c - 2 * 3 % 2;
 
-    while(true) {
-        cout << "INFINITY LOOP";
+    bool boolValue = true;
+    int inc = 0;
+    while(boolValue) {
+        cout << "INFINITY LOOP\n";
+        if (inc < 8)
+        {
+            inc += 1;
+        }
+        else
+        {
+            boolValue = false;
+        }
     }
     return 0;
 }
